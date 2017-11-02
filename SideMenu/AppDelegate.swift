@@ -8,16 +8,93 @@
 
 import UIKit
 import CoreData
+import Firebase
+import FirebaseAuth
+import GoogleSignIn
+import FBSDKLoginKit
+import Reachability
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
+class AppDelegate: UIResponder,UIApplicationDelegate,GIDSignInDelegate {
+    var reach: Reachability?
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+//        UINavigationBar.appearance().barTintColor = UIColor(red: 0.0/255.0, green: 0.0/255.0, blue: 0.0/255.0, alpha: 1.0)
+//        UINavigationBar.appearance().tintColor = UIColor.green
+        FirebaseApp.configure()
+        // Initialize sign-in
+    
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+        GIDSignIn.sharedInstance().delegate = self
+        
+       FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+        // Allocate a reachability object
+//        self.reach = Reachability.forInternetConnection()
+        
+        // Tell the reachability that we DON'T want to be reachable on 3G/EDGE/CDMA
+//        self.reach!.reachableOnWWAN = false
+        
+        // Here we set up a NSNotification observer. The Reachability that caused the notification
+        // is passed in the object parameter
+//        NotificationCenter.default.addObserver(
+//            self,
+//            selector: #selector(reachabilityChanged),
+//            name: NSNotification.Name.reachabilityChanged,
+//            object: nil
+//        )
+
+//        self.reach!.startNotifier()
         return true
+    }
+   
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        if let err = error {
+            print("Failed to log into Google",err)
+            return
+        }
+        print("Succesfully to log into Google account")
+        guard let authentication = user.authentication else { return }
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                       accessToken: authentication.accessToken)
+        Auth.auth().signIn(with: credential) { (user, error) in
+            if let err = error {
+                print("Failed to create a  Firebase user with Google account",err)
+                return
+            }
+            guard let uid = user?.uid else {return}
+            print("Successfully to create a Firebase user with Google account",uid)
+        }
+    }
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+        let sourceApplication =  options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String
+        let annotation = options[UIApplicationOpenURLOptionsKey.annotation]
+
+        let googleHandler = GIDSignIn.sharedInstance().handle(
+            url,
+            sourceApplication: sourceApplication,
+            annotation: annotation )
+
+        let facebookHandler = FBSDKApplicationDelegate.sharedInstance().application (
+            app,
+            open: url,
+            sourceApplication: sourceApplication,
+            annotation: annotation )
+
+        return googleHandler || facebookHandler
+    }
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+        let googleDidHandle = GIDSignIn.sharedInstance().handle(url,
+        sourceApplication: sourceApplication,
+        annotation: annotation)
+
+        let facebookDidHandle = FBSDKApplicationDelegate.sharedInstance().application(
+            application,
+            open: url,
+            sourceApplication: sourceApplication,
+            annotation: annotation)
+
+        return googleDidHandle || facebookDidHandle
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

@@ -4,8 +4,15 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>SideMenu.xcscheme</key>
+		<key>Side.xcscheme_^#shared#^_</key>
 		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>SideMenu.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>isShown</key>
+			<true/>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
@@ -18,6 +25,21 @@
 			<true/>
 		</dict>
 		<key>C3438F091F6BC24E001C38BB</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C3ECDCE91FA086B80064AC34</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C3ECDCF71FA08CFC0064AC34</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C3FA184C1FA1D61E00A93EDA</key>
 		<dict>
 			<key>primary</key>
 			<true/>

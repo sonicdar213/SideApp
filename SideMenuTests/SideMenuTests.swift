@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import SideMenu
+@testable import Pods_SideMenu
 
 class SideMenuTests: XCTestCase {
     

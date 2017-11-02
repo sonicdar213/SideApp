@@ -1,0 +1,6 @@
+framework module Pods_SideMenuTests {
+  umbrella header "Pods-SideMenuTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
